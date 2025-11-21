@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmls:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{Layout}">
+
+    <body class="container bg-light" layout:fragment="content">
+        <header>
+            <div class="d-flex align-items-center p-3 my-4 text-white  bg-primary rounded shadow-sm">
+                <h3 class="3h-3">Usuarios</h3>
+            </div>
+            <div> 
+                <form>
+                    <div class="row justify-content-end">
+                        <div class="col-2">
+<!--                            <div th:if="${errores.size() != 0}">
+                                <span class="text-danger">Existen errores en tu archivo</span>
+                                <ul th:each="error, iterStat: ${errores}">
+                                    <li th:text="${error.descripcion}"></li>
+                                </ul>
+                            </div>-->
+<!--                            <div th:if="${isCorrect == true}">
+                                <span class="text-success">No existen errores en tu archivo</span>
+                            </div>-->
+                        </div>
+                        <div class="col-1 ">
+                            <button class="btn btn-warning"
+                                    type="button" data-bs-toggle="modal" 
+                                    data-bs-target="#modalCarga">
+                                Cargar
+
+                            </button> 
+                        </div>
+                        <div th:if="${isCorrect == true}" class="col-1">
+                            <!--<span class="">No hay errores</span>-->
+                             <a class="btn btn-success" th:href="@{/usuario/cargamasiva/procesar}">Procesar</a>
+                        </div>
+                        <form th:action="@{filtro}" method="post" class="row" id="filtro">
+
+                            <div class="col-3">
+                                <select class="form-select" name="campo">
+                                    <option value="0" selected>Buscar por</option>
+                                    <option value="Nombre">Nombre</option>
+                                    <option value="ApellidoPaterno">Apellido Paterno</option>
+                                    <option value="ApellidoMaterno">Apellido Materno</option>
+                                </select>
+                            </div>
+
+                            <div class="col-3">
+                                <input type="text" class="form-control" name="valor" id="buscarCampo" placeholder="Campo">
+                            </div>
+
+                            <div class="col-1">
+                                <button type="submit" class="btn btn-secondary" for="filtro">Buscar</button>
+                            </div>
+
+                      </form>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </header>
+        <main>
+            <div class="my-3 p-3 bg-body rounded shadow-sm">
+                <div class="row justify-content-end">
+                    <div class="col-2 d-flex justify-content-end">
+                        <a type="button" class="btn btn-success"  th:href="@{/usuario/add}">
+                            <i class="bi bi-plus-lg"></i>
+                            Agregar
+                        </a>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class=" table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="text-black-50">#Id</th>
+                                <th scope="col-1" class="text-black-50">Imagen</th>
+                                <th scope="col-1" class="text-black-50">
+                                    Nombre
+                                </th>
+                                <th scope="col" class="text-black-50">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                    Direccion
+                                </th>
+                                <th scope="col" class="text-black-50">
+                                    <i class="bi bi-telephone-fill"></i>
+                                    Contacto
+                                </th>
+                                <th scope="col-1" class="text-black-50">Roll</th>
+                                <th scope="col" class="text-black-50">Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="usuario, iterStat: ${usuarios}" >
+                                <th  scope="row"><span th:text="${iterStat.index + 1}"></span></th>
+                                <td class="col-1">
+                                    <img th:src="${usuario.Imagen == null} ? 'https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg' : 'data:image/jpeg;base64,' + ${usuario.Imagen}"
+                                         alt="Foto de perfil" class="rounded-circle" id="imagen" width="42">
+                                </td>
+                                <td class="col-1" th:text="|${usuario.Nombre} ${usuario.ApellidoPaterno}|"></td>
+                                <td class="col-4">
+                                    <ul th:each="direccion, iterStat: ${usuario.Direccion}">
+                                        <li th:text="|Calle: ${direccion.Calle}, Numero Interior: ${direccion.NumeroInterior}, Numero Exterior: ${direccion.NumeroExterior}, Numero Exterior: ${direccion.NumeroExterior}|"></li>
+                                    </ul>
+
+                                </td>
+                                <td>
+                                    <ul>
+                                        <li>Celular: <span th:text="${usuario.Celular}"></span></li>
+                                        <li>Telefono: <span th:text="${usuario.Telefono}"></span></li>
+                                        <li>Email: <span th:text="${usuario.Email}"></span></li>
+                                    </ul>
+                                </td>
+                                <td class="">
+                                    <div class="badge text-bg-secondary"><span th:text="${usuario.Roll.NombreRoll}"></span></div>
+                                </td>
+                                <td class=" col-3">
+                                    <a type="button" class="btn btn-primary btn-sm" th:href="@{/usuario/detail/{id}(id=${usuario.IdUsuario})}"> 
+                                        <i class="bi bi-pencil-square"></i>
+                                        Editar
+                                    </a>
+                                    <button type="button" class="btn btn-danger btn-sm" th:onclick="|confirmarEliminacionUsuario(${usuario.IdUsuario})|"> 
+                                        <i class="bi bi-trash3-fill"> Eliminar</i>
+                                    </button>
+                                </td>
+                            </tr> 
+                        </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+        </main>
+        <div class="modal fade" id="modalCarga" tabindex="-1" aria-labelledby="modalCargaLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title justify-content-center" id="modalCarga"> Cargar Archivo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="p-4 justify-content-center my-3"  th:action="@{/usuario/cargamasiva}" method="post" enctype="multipart/form-data" id="cargaForm">                 
+                            <div class="row justify-content-center text-center">
+                                <label  class="form-label d-block mb-2">Selecciona un archivo (.txt o .xlsx)</label>
+                                <input type="file" 
+                                       id="archivo" 
+                                       name="archivo" 
+                                       accept=".txt,.xlsx"
+                                       style="display: none;" 
+                                       onchange="nombreArchivo(event, this)">
+                                <label for="archivo" class="btn btn-outline-secondary d-flex flex-column align-items-center p-3 shadow-sm rounded-3" style="cursor: pointer;">
+                                    <i class="bi bi-cloud-arrow-up fs-3 mb-1"></i>
+                                    <span>Escoger archivo</span>
+                                </label>
+                                <p id="nombre-archivo" class="mt-2 text-muted small"></p>
+
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary" form="cargaForm">Subir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+        </footer>
+            
+        <script>
+            function confirmarEliminacionUsuario(idUsuario){
+            Swal.fire({
+            title: "Estas seguro de eliminar este usuario?",
+                    text: "No puedes revertir esta accion!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Si, eliminalo"
+            }).then((result) => {
+            if (result.isConfirmed) {
+            window.location.href = "/usuario/delete/" + idUsuario;
+            }
+            });
+            }
+            
+            function nombreArchivo(event, input){
+                
+                
+            }
+        </script>
+
+
+    </body>
+<!--    <script th:if="${successErrorArchivo}">
+        
+        alert("Entro a la funcion");
+        if(${errores} != null) {
+            
+            alert("No trae errores");
+            
+            $("#spanErrores").text("El archivo es correcto").addClass("text-success");
+        } else {
+            
+            $("#spanErrores").text("El archivo contiene errores").addClass("text-danger");
+            alert("Trae errores");
+        }
+        
+    </script>-->
+    <script th:if="${successAddAll}" th:inline="javascript">
+        Swal.fire({
+        title: "Alert"
+                draggable: true,
+                text:  [[${successAddAll}]]
+        });
+    </script>
+    <script th:if="${successErrorUsers}" th:inline="javascript">
+        Swal.fire({
+        title: "Alert"
+                draggable: true,
+                text:  [[${successMessage}]]
+        });
+    </script>
+    <script th:if="${successMessage}" th:inline="javascript">
+        Swal.fire({
+        title: [[${successMessage}]],
+                icon: "success",
+                draggable: true
+        });
+    </script>
+    <script th:if="${successDeleteMessage}" th:inline="javascript">
+        Swal.fire({
+        title: [[${successDeleteMessage}]],
+                icon: "success",
+                draggable: true
+        });
+    </script>
+</html>
+

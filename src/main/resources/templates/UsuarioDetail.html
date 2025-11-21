@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Usuario Detail</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        <style>
+            .profile-img {
+              width: 150px;
+              height: 150px;
+              object-fit: cover;
+              border-radius: 50%;
+              border: 3px solid #dee2e6;
+            }
+        </style>
+    </head>
+    <body class=" bg-light">
+        <main>
+            <div class="container my-3 p-3 bg-body rounded shadow-sm display-flex">
+                <div class="row my-3">
+                    <div class="col-4">
+                        <div class="d-flex justify-content-center">
+                            <div>
+<!--                                th:src="${usuario.Imagen == null} ? 'https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg' : 'data:image/jpeg;base64,' + ${usuario.Imagen}"-->
+                                <img  th:src="${usuario.Imagen == null} ? 'https://mdbootstrap.com/img/Photos/Others/placeholder-avatar.jpg' : 'data:image/jpeg;base64,' + ${usuario.Imagen}"
+                                     alt="Foto de perfil" class="profile-img mx-auto mb-3 " id="Idimagen" >
+                            </div>
+                        </div>
+                         <div class="d-flex justify-content-center">
+                                <div data-mdb-ripple-init class="btn btn-primary btn-rounded">
+                                    <label class="form-label text-white m-1" for="customFile2">Choose file</label>
+                                    
+                                    <input type="file" class="form-control d-none" id="customFile2" onchange="displaySelectedImage(event, 'Idimagen')" />
+                                </div>
+                            </div>
+                        <div class="text-black-50">
+                            <h6 class="h6 d-flex justify-content-center my-2">Username :  <span th:text="${usuario.UserName}"></span></h6>
+                        </div>
+                        <hr>
+                         <div class="row ">
+                            <div class="col-4">
+                                <h6 class="h6 text-black-50 d-flex justify-content-start">Nombre:</h6>
+                            </div>
+                            <div class="col-8">
+                                <h6 class="h6 d-flex justify-content-start" th:text="${usuario.Nombre}"></h6>
+                            </div>
+                        </div>
+                        <div class="row ">
+                            <div class="col-4">
+                                <h6 class="h6 text-black-50 d-flex justify-content-start">Apellido:</h6>
+                            </div>
+                            <div class="col-8">
+                                <h6 class="h6 d-flex justify-content-start"th:text="|${usuario.ApellidoPaterno} ${usuario.ApellidoMaterno}|"></h6>
+                            </div>
+                        </div>
+                        <div class="row ">
+                            <div class="col-4">
+                                <h6 class="h6 text-black-50 d-flex justify-content-start">CURP:</h6>
+                            </div>
+                            <div class="col-8">
+                                <h6 class="h6 d-flex justify-content-start" th:text="${usuario.Curp}"></h6>
+                            </div>
+                        </div>
+                        <div class="row ">
+                            <div class="col-4">
+                                <h6 class="h6 text-black-50 d-flex justify-content-start">Sexo:</h6>
+                            </div>
+                            <div class="col-8">
+                                <h6 class="h6 d-flex justify-content-start" th:text="${usuario.Sexo}"></h6>
+                            </div>
+                        </div>
+                        <hr><!-- comment -->
+                        <div class="row ">
+                            <div class="col-4">
+                                <h6 class="h6 text-black-50 d-flex justify-content-start">Email:</h6>
+                            </div>
+                            <div class="col-8">
+                                <h6 class="h6 d-flex justify-content-start " th:text="${usuario.Email}"></h6>
+                            </div>
+                        </div>
+                         <div class="row ">
+                            <div class="col-4">
+                                <h6 class="h6 text-black-50 d-flex justify-content-start">Telefono:</h6>
+                            </div>
+                            <div class="col-8">
+                                <h6 class="h6 d-flex justify-content-start" th:text="${usuario.Telefono}"></h6>
+                            </div>
+                        </div>
+                         <div class="row ">
+                            <div class="col-4">
+                                <h6 class="h6 text-black-50 d-flex justify-content-start">Celular:</h6>
+                            </div>
+                            <div class="col-8">
+                                <h6 class="h6 d-flex justify-content-start" th:text="${usuario.Celular}"></h6>
+                            </div>
+                        </div>
+                        
+                         <div class="row my-3">
+                            <div class="col-6 d-grid gap-2">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalFormulario">
+                                    <i class="bi bi-pencil-square">Editar</i>
+                                    
+                                </button>
+                            </div>
+                            <div class="col-6 d-grid gap-2">
+                               <button type="button" class="btn btn-danger" th:onclick="|confirmarEliminacionUsuario(${usuario.IdUsuario})|"> 
+                                    <i class="bi bi-trash3-fill"> Eliminar</i>
+                                   
+                               </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                       <div class="row justify-content-end">
+                            <div class="col h5 text-black-50">
+                                Direcciones
+                            </div>
+                            <div class="col-2 d-flex justify-content-end">
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" 
+                                        data-bs-target="#modalDireccionFormulario"
+                                        th:onclick="|LimpiarCampos()|">
+                                    <i class="bi bi-plus-lg"> Agregar</i>
+                                    
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+
+                            <table class="table table-hover table-striper">
+                                <thead>
+                                    <tr>
+                                         <th scope="col" class="text-black-50">#Id</th>
+                                         <th scope="col" class="text-black-50">Calle</th>
+                                         <th scope="col" class="text-black-50">No. Interior</th>
+                                         <th scope="col" class="text-black-50">No. Exterior</th>
+                                         <th scope="col" class="text-black-50">Colonia</th>
+                                         <th scope="col" class="text-black-50">Municipio</th>
+                                         <th scope="col" class="text-black-50">Estado</th>
+                                         <td scope="col" class="text-black-50">Accion</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="direccion, iterStat: ${usuario.Direccion}">
+                                        <th scope="row" ><span th:text="${iterStat.index + 1}"></span></th>
+                                        <td th:text="${direccion.Calle}"></td>
+                                        <td th:text="${direccion.NumeroInterior}"></td>
+                                        <td th:text="${direccion.NumeroExterior}"></td>
+                                        <td th:text="${direccion.Colonia.Nombre}"></td>
+                                        <td th:text="${direccion.Colonia.Municipio.Nombre}"></td>
+                                        <td th:text="${direccion.Colonia.Municipio.Estado.Nombre}"></td>
+                                        <td class="d-flex gap-2">
+                                            
+                                            <button type="button" data-bs-toggle="modal" 
+                                                    data-bs-target="#modalDireccionFormulario" 
+                                                    class="btn btn-primary btn-sm" 
+                                                   th:onclick="|FormDireccionEditable(${direccion.IdDireccion})|" >
+                                            <i class="bi bi-pencil-square">Editar</i>
+                                                
+                                            </button>
+                                            <button type="button" class="btn btn-danger btn-sm" th:onclick="|confirmarEliminacionDireccion(${direccion.IdDireccion})|"> 
+                                                <i class="bi bi-trash3-fill"> Eliminar</i>
+                                               
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </main>
+        <div class="modal fade" id="modalFormulario" tabindex="-1" aria-labelledby="modalFormularioLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalFormularioLabel">Actualizar Usuario</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form class="p-4 justify-content-center my-3" th:action="@{/usuario/detail}" th:object="${usuario}" method="post" id="usuarioForm">
+                     <input type="hidden" name="idUsuario" th:value="${usuario.idUsuario}" id="idUsuario">
+                      <div class="row">
+                          <div class="form-group col-6">
+                            <label for="nombre">Username:</label>
+                            <input type="text" class="form-control" id="userNombre" required th:field="*{UserName}"> 
+                            <span th:if="${#fields.hasErrors('UserName')}" th:errors="*{UserName}" class="text-danger"></span>
+                             
+                          </div>
+                          <div class="form-group col-6">
+                            <label for="email">Nombre:</label>
+                            <input type="text" class="form-control" id="nombre" required th:field="*{Nombre}" >
+                            <span th:if="${#fields.hasErrors('Nombre')}" th:errors="*{Nombre}" class="text-danger"></span>
+                          </div>
+                      </div>
+                      <div class="row">
+                          <div class="form-group col-6">
+                            <label for="apellidoPaterno">Apellido Paterno:</label>
+                            <input type="text" class="form-control" id="apellidoPaterno" required th:field="*{ApellidoPaterno}">
+                            <span th:if="${#fields.hasErrors('ApellidoPaterno')}" th:errors="*{ApellidoPaterno}" class="text-danger"></span>
+                          </div>
+                          <div class="form-group col-6">
+                            <label for="apellidoMatenro">Apellido Materno:</label>
+                            <input type="text" class="form-control" id="apellidoMaterno" required th:field="*{ApellidoMaterno}">
+                            <span th:if="${#fields.hasErrors('ApellidoMaterno')}" th:errors="*{ApellidoMaterno}" class="text-danger"></span>
+                          </div>
+                      </div>
+                      <div class="row">
+                          <div class="form-group col-6">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" required th:field="*{Email}">
+                            <span th:if="${#fields.hasErrors('Email')}" th:errors="*{Email}" class="text-danger"></span>
+                          </div>
+                         <div class="form-group col-6">
+                            <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+                            <input type="date" class="form-control" id="fechaNacimiento" required th:field="*{FechaNacimiento}">
+                            <span th:if="${#fields.hasErrors('FechaNacimiento')}" th:errors="*{FechaNacimiento}" class="text-danger"></span>
+                          </div>
+                      </div>
+                      <div class="row">
+                          <div class="form-group col-6">
+                            <label for="password">Sexo:</label>
+                            <input type="text" class="form-control" id="sexo" required th:field="*{Sexo}">
+                            <span th:if="${#fields.hasErrors('UserName')}" th:errors="*{UserName}" class="text-danger"></span>
+                          </div>
+                          <div class="form-group col-6">
+                            <label for="telefono">Telefono:</label>
+                            <input type="text" class="form-control" id="telefono" required th:field="*{Telefono}">
+                             <span th:if="${#fields.hasErrors('Telefono')}" th:errors="*{Telefono}" class="text-danger"></span>
+                          </div>
+                      </div>
+                      <div class="row">
+                          <div class="form-group col-6">
+                            <label for="celular">Celular:</label>
+                            <input type="text" class="form-control" id="celular" required th:field="*{Celular}">
+                             <span th:if="${#fields.hasErrors('Celular')}" th:errors="*{Celular}" class="text-danger"></span>
+                          </div>
+                          <div class="form-group col-6">
+                            <label for="curp">Curp:</label>
+                            <input type="text" class="form-control" id="curp" required th:field="*{Curp}">
+                             <span th:if="${#fields.hasErrors('Curp')}" th:errors="*{Curp}" class="text-danger"></span>
+                          </div >
+                      </div>
+                      <div class="row">
+                          <div class="form-group col-6">
+                              
+                              
+                            <label for="roll">Roll:</label>
+                            <select class="form-select" aria-label="Default select example" th:field="*{Roll.IdRoll}">
+                                
+                                <option th:each="roll : ${rolles}" th:value="${roll.IdRoll}" th:text="${roll.NombreRoll}"></option>
+                            </select>
+                            <span th:if="${#fields.hasErrors('Roll.IdRoll')}" th:errors="*{Roll.IdRoll}" class="text-danger"></span>
+
+                          </div>
+                      </div>
+                  </form>
+                </div>
+                
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                  <button type="submit" class="btn btn-primary" form="usuarioForm">Guardar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        <div class="modal fade" id="modalDireccionFormulario" tabindex="-1" aria-labelledby="modalDireccionFormularioLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title justify-content-center" id="modalFormularioLabelDireccion"></h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form class="p-4 justify-content-center my-3" th:action="@{/usuario/actiondireccion/{idUsuario}(idUsuario = ${usuario.IdUsuario})}" th:object="${direccion}" method="post" id="usuarioDireccionForm">
+                     <input type="hidden" name="idDireccion" th:field="*{IdDireccion}" id="idDireccion">
+                      <div class="row">
+                          <div class="form-group col-6">
+                           <label for="pais" class="form-label">Pais</label>
+                            <select id="ddlpais" class="form-select" aria-label="Default select example" th:field="*{Colonia.Municipio.Estado.Pais.IdPais}">
+                                <option selected value=0> Ingrese un Pais</option>
+                                <option th:each="pais : ${paises}" th:value="${pais.IdPais}" th:text="${pais.Nombre}"></option>
+
+                            </select>
+                          </div>
+                          <div class="form-group col-6">
+                            <label for="estado" class="form-label">Estado</label>
+                            <select id="ddlestado" class="form-select" aria-label="Default select example" th:field="*{Colonia.Municipio.Estado.IdEstado}">
+                                <option value=0 selected>Selecciona un estado</option>
+                            </select>
+                          </div>
+                      </div>
+                     <div class="row">
+                         
+                         <div class="form-group col-6">
+                               <label for="municipio" class="form-label">Municipio</label>
+                              <select id="ddlmunicipio" class="form-select" aria-label="Default select example" th:field="*{Colonia.Municipio.IdMunicipio}">
+                                  <option value=0 selected>Selecciona un municipio</option>
+                              </select>
+                         </div>
+                         <div class="form-group col-6">
+                            <label for="colonia" class="form-label">Colonia</label>
+                            <select id="ddlcolonia" class="form-select" aria-label="Default select example" th:field = "*{Colonia.IdColonia}">
+                                <option value=0 selected>Selecciona una colonia</option>
+                            </select>
+                         </div>
+                     </div>
+                     <div class="row">
+                         
+                         <div class="form-group col-6">
+                             <label for="codigoPostal" class="form-label">Codigo Postal</label>
+                              <input type="text" class="form-control" id="codigoPostal" th:field="*{Colonia.CodigoPostal}">
+                         </div>
+                         <div class="form-group col-6">
+                            <label for="calle" class="form-label">Calle</label>
+                            <input type="text" class="form-control" id="calle" th:field="*{Calle}">
+                         </div>
+                     </div>
+                     <div class="row">
+                         <div class="form-group col-6">
+                             <label for="numeroInterior" class="form-label">Numero Interior</label>
+                             <input type="number" class="form-control" id="numeroInterior" th:field = "*{NumeroInterior}">
+                         </div>
+                         <div class="form-group col-6">
+                             <label for="numeroExterior" class="form-label">Numero Exterior</label>
+                              <input type="number" class="form-control" id="numeroExterior" th:field = "*{NumeroExterior}">
+                         </div>
+                     </div>
+
+                  </form>
+                </div>
+                
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                  <button type="submit" class="btn btn-primary" form="usuarioDireccionForm">Guardar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+    </body>
+    <script th:if="${successUpdateDireccionMessage}" th:inline="javascript">
+        Swal.fire({
+            title: [[${successUpdateDireccionMessage}]],
+            icon: "success",
+            draggable: true
+        });
+    </script>
+    <script th:if="${successAddDireccionMessage}" th:inline="javascript">
+        Swal.fire({
+            title: [[${successAddDireccionMessage}]],
+            icon: "success",
+            draggable: true
+        });
+    </script>
+    <script th:if="${successDeleteDireccionMessage}" th:inline="javascript">
+        Swal.fire({
+            title: [[${successDeleteDireccionMessage}]],
+            icon: "success",
+            draggable: true
+        });
+    </script>
+    <script th:if="${successDeleteMessage}" th:inline="javascript">
+        Swal.fire({
+            title: [[${successDeleteMessage}]],
+            icon: "success",
+            draggable: true
+        });
+    </script>
+    <script th:inline="javascript">
+        
+        function confirmarEliminacionUsuario(idUsuario){
+            
+            Swal.fire({
+            title: "Estas seguro de eliminar este usuario?",
+            text: "No puedes revertir esta accion!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si, eliminalo" 
+          }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "/usuario/delete/"+idUsuario;
+            }
+          });
+        }
+        
+        function confirmarEliminacionDireccion(idDireccion){
+            
+            Swal.fire({
+            title: "Estas seguro de eliminar esta direccion?",
+            text: "No puedes revertir esta accion!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si, eliminala" 
+          }).then((result) => {
+            if (result.isConfirmed) {
+                
+                window.location.href = "/usuario/deleteDireccion/"+idDireccion;
+            }
+          });
+        }
+        
+        function displaySelectedImage(event, elementId) {
+            const selectedImage = document.getElementById(elementId);
+            const fileInput = event.target;
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                const file = fileInput.files[0];
+
+                reader.onload = function(e) {
+                    selectedImage.src = e.target.result;
+                    
+                    const userId = [[${usuario.idUsuario}]];
+                    const formData = new FormData();
+                    formData.append('imagen', file);
+                    
+                    $.ajax({
+                        url:"/usuario/updateImagen/"+ userId,
+                        type:"POST",
+                        processData : false,
+                        data: formData,
+                        contentType : false,
+                        success: function(data, textStatus, jqXHR){
+                           Swal.fire ({
+                               title : "Foto actualizada",
+                               daggrable : true,
+                               icon : "success"
+                           });
+                        }
+                        ,
+                        error: function (jqXHR, textStatus, errorThrown) {
+                               Swal.fire ({
+                               title : "Foto  no actualizada",
+                               daggrable : true,
+                               icon : "error"
+                           });
+                        }
+                    });
+                    alert(usuario.Imagen);
+                };
+
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+        
+        function LimpiarCampos(){
+            
+            $("#modalFormularioLabelDireccion").text("Agregar Dirección");
+            $("#idDireccion").val(0);
+            $("#calle").val("");
+            $("#numeroInterior").val("");
+            $("#numeroExterior").val("");
+            $("#codigoPostal").val("");
+            $("#ddlcolonia").val("");
+            ("#ddlmunicipio").val("");
+            ("#ddlestado").val("");
+            ("#ddlpais").val("");
+        }
+        
+        function FormDireccionEditable(idDireccion){
+            $("#modalFormularioLabelDireccion").text("Editar Dirección");
+            var direccion;
+            $.ajax({
+                url:"/usuario/direccion/"+idDireccion,
+                type:"GET",
+                dataType: "json",
+                success: function(data, textStatus, jqXHR){
+                    $("#idDireccion").val(idDireccion);
+                    $("#calle").val( data.object.calle );
+                    $("#numeroInterior").val(data.object.numeroInterior);
+                    $("#numeroExterior").val(data.object.numeroExterior);
+                    $("#codigoPostal").val(data.object.colonia.codigoPostal);
+                     setTimeout(() => {
+                         $("#ddlestado").val(data.object.colonia.municipio.estado.idEstado).change();
+                         setTimeout(() => {
+                              $("#ddlmunicipio").val(data.object.colonia.municipio.idMunicipio).change();
+                               setTimeout(() => {
+                                   $("#ddlcolonia").val(data.object.colonia.idColonia).change();
+                                   
+                               }, 300);
+                         }, 300);
+                     }, 300);
+                    $("#ddlpais").val(data.object.colonia.municipio.estado.pais.idPais).change();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                        alert("no hay nada por cargar :/");
+                }
+            });
+            
+            // consumo ajax url:/alumno/getEstadoByPais/ + direccion.Colonia.munici
+            // consumo ajax url:/alumno/getMunicipiosByEstado/ + direccion.Colonia.municipio.Estado.IdEstado
+        }
+
+        $(document).ready(function () {
+            
+
+
+            $("#ddlpais").change(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: "/usuario/estado/" + $("#ddlpais").val(),
+                    dataType: "json",
+                    success: function (data, textStatus, jqXHR) {
+
+                        $("#ddlestado").empty();
+                        $("#ddlestado").append("<option value=0 selected>Selecciona un estado</option>");
+                        $.each(data.objects, function (i, estado) {
+                            $("#ddlestado").append("<option value= " + estado.idEstado + "> " + estado.nombre + "</option>")
+                        });
+
+                    },
+                
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert("no hay nada por cargar :/");
+                    }
+                });
+            });
+            
+            $("#ddlestado").change(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: "/usuario/municipio/" + $("#ddlestado").val(),
+                    dataType: "json",
+                    success: function (data, textStatus, jqXHR) {
+
+                        $("#ddlmunicipio").empty();
+                        $("#ddlmunicipio").append("<option value = 0 selected> Selecciona un municipio</option>");
+                        $.each(data.objects, function (i, municipio) {
+                            $("#ddlmunicipio").append("<option value= " + municipio.idMunicipio + "> " + municipio.nombre + "</option>")
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert("no hay nada por cargar :/");
+                    }
+                });
+            });
+            
+            $("#ddlmunicipio").change(function () {
+                $.ajax({
+                    type: 'GET',
+                    url: "/usuario/colonia/" + $("#ddlmunicipio").val(),
+                    dataType: "json",
+                    success: function (data, textStatus, jqXHR) {
+
+                        $("#ddlcolonia").empty();
+                        $("#ddlcolonia").append("<option value = 0 selected> Selecciona una colonia</option>");
+                        $.each(data.objects, function (i, colonia) {
+                            $("#ddlcolonia").append("<option value= " + colonia.idColonia + " data-cp=" + colonia.codigoPostal+" >" + colonia.nombre + "</option>");
+                            //alert(colonia.codigoPostal);
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert("no hay nada por cargar :/");
+                    }
+                });
+            });
+            
+            $("#ddlcolonia").change(function () {
+                
+                $("#codigoPostal").empty();
+                $("#codigoPostal").val($("#ddlcolonia option:selected").data("cp") ) ;
+            });
+        });
+    </script>
+    <script th:if="${successMessage}" th:inline="javascript">
+        Swal.fire({
+            title: [[${successMessage}]],
+            icon: "success",
+            draggable: true
+        });
+    </script>
+    <script th:if="${errorMessage}" th:inline="javascript">
+        Swal.fire({
+            title: [[${errorMessage}]],
+            icon: "error",
+            draggable: true
+        });
+    </script>
+</html>
