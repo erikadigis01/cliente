@@ -166,7 +166,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                             <i class="bi bi-pencil-square">Editar</i>
                                                 
                                             </button>
-                                            <button type="button" class="btn btn-danger btn-sm" th:onclick="|confirmarEliminacionDireccion(${direccion.IdDireccion})|"> 
+                                            <button type="button" class="btn btn-danger btn-sm" th:onclick="|confirmarEliminacionDireccion(${direccion.IdDireccion},${usuario.IdUsuario})|"> 
                                                 <i class="bi bi-trash3-fill"> Eliminar</i>
                                                
                                             </button>
@@ -395,7 +395,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
           });
         }
         
-        function confirmarEliminacionDireccion(idDireccion){
+        function confirmarEliminacionDireccion(idDireccion,idUsuario){
             
             Swal.fire({
             title: "Estas seguro de eliminar esta direccion?",
@@ -408,7 +408,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
           }).then((result) => {
             if (result.isConfirmed) {
                 
-                window.location.href = "/usuario/deleteDireccion/"+idDireccion;
+                
+             
+                window.location.href = "/usuario/"+idUsuario+"/deleteDireccion/"+idDireccion;
             }
           });
         }
