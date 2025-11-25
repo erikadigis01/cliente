@@ -38,10 +38,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                             <!--<span class="">No hay errores</span>-->
                              <a class="btn btn-success" th:href="@{/usuario/cargamasiva/procesar}">Procesar</a>
                         </div>
-                        <form th:action="@{filtro}" method="post" class="row" id="filtro">
+                        <form th:action="@{filtro}"  method="post" class="row" id="filtro">
 
                             <div class="col-3">
-                                <select class="form-select" name="campo">
+                                <select class="form-select" th:field="${campo}">
                                     <option value="0" selected>Buscar por</option>
                                     <option value="Nombre">Nombre</option>
                                     <option value="ApellidoPaterno">Apellido Paterno</option>
@@ -50,7 +50,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                             </div>
 
                             <div class="col-3">
-                                <input type="text" class="form-control" name="valor" id="buscarCampo" placeholder="Campo">
+                                <input type="text" class="form-control" th:field="{valor}" id="buscarCampo" placeholder="Campo">
                             </div>
 
                             <div class="col-1">

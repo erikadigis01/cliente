@@ -378,6 +378,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     </script>
     <script th:inline="javascript">
         
+        let url= "http://localhost:8080/";
+        
         function confirmarEliminacionUsuario(idUsuario){
             
             Swal.fire({
@@ -477,7 +479,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             $("#modalFormularioLabelDireccion").text("Editar Dirección");
             var direccion;
             $.ajax({
-                url:"/usuario/direccion/"+idDireccion,
+                url: url + "direccion/"+idDireccion,
                 type:"GET",
                 dataType: "json",
                 success: function(data, textStatus, jqXHR){
@@ -506,7 +508,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             // consumo ajax url:/alumno/getEstadoByPais/ + direccion.Colonia.munici
             // consumo ajax url:/alumno/getMunicipiosByEstado/ + direccion.Colonia.municipio.Estado.IdEstado
         }
-
+        
+        
+        
         $(document).ready(function () {
             
 
@@ -514,7 +518,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             $("#ddlpais").change(function () {
                 $.ajax({
                     type: 'GET',
-                    url: "/usuario/estado/" + $("#ddlpais").val(),
+                    url: url + "estado/pais/" + $("#ddlpais").val(),
                     dataType: "json",
                     success: function (data, textStatus, jqXHR) {
 
@@ -535,7 +539,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             $("#ddlestado").change(function () {
                 $.ajax({
                     type: 'GET',
-                    url: "/usuario/municipio/" + $("#ddlestado").val(),
+                    url: url + "municipio/estado/" + $("#ddlestado").val(),
                     dataType: "json",
                     success: function (data, textStatus, jqXHR) {
 
@@ -554,7 +558,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             $("#ddlmunicipio").change(function () {
                 $.ajax({
                     type: 'GET',
-                    url: "/usuario/colonia/" + $("#ddlmunicipio").val(),
+                    url: url + "colonia/municipio/" + $("#ddlmunicipio").val(),
                     dataType: "json",
                     success: function (data, textStatus, jqXHR) {
 

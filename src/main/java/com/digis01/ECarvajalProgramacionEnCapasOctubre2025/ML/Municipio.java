@@ -2,7 +2,7 @@ package com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML;
 
 
 public class Municipio {
-
+    
     private int IdMunicipio;
     private String Nombre;
     public Estado Estado;

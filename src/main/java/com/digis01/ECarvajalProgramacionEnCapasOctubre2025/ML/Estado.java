@@ -2,7 +2,7 @@ package com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML;
 
 
 public class Estado {
-
+    
     private int IdEstado;
     private String Nombre;
     public Pais Pais;

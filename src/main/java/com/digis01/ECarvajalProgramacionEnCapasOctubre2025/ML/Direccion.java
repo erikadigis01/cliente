@@ -1,6 +1,8 @@
 package com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML;
 
-import jakarta.validation.Valid;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.constraints.NotNull;
 
 
@@ -11,13 +13,16 @@ public class Direccion {
     @NotNull(message = "El campo no puede ser nulo")
     private String Calle;
     
-    
     private String NumeroInterior;
     
     @NotNull(message = "El campo no puede ser nulo")
     private String NumeroExterior;
-    
+ 
     public Colonia Colonia;
+    
+    
+    @JsonProperty("UsuarioJPA")
+    public Usuario Usuario;
     
     public Direccion(){
     
@@ -62,6 +67,14 @@ public class Direccion {
 
     public void setColonia(Colonia Colonia) {
         this.Colonia = Colonia;
+    }
+    
+    public Usuario getUsuario() {
+        return Usuario;
+    }
+
+    public void setUsuario(Usuario Usuario) {
+        this.Usuario = Usuario;
     }
     
 }

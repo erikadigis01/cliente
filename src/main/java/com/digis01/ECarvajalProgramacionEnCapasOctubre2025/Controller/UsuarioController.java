@@ -13,9 +13,11 @@ import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect.Type;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static org.apache.logging.log4j.message.MapMessage.MapFormat.JSON;
 import org.modelmapper.TypeToken;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -293,5 +295,120 @@ public class UsuarioController {
         } 
        
         return "redirect:/usuario/detail/" + idUsuario;
+    }
+    
+    @PostMapping("actiondireccion/{idUsuario}")
+    public String ActionDireccion(@PathVariable("idUsuario") int idUsuario, @ModelAttribute("direccion") Direccion direccion,
+            BindingResult bindingResult, Model model,
+            RedirectAttributes redirectAttributes) {
+        
+        direccion.Usuario = new Usuario();
+        direccion.Usuario.setIdUsuario(idUsuario);
+        
+        RestTemplate restTemplate = new RestTemplate();
+        
+        HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON); // O el tipo que necesites
+            HttpEntity<Direccion> requestEntityDireccion = new HttpEntity<>(direccion, headers);
+            
+
+        if (direccion.getIdDireccion() == 0) { // agregar direccion a usuario
+
+            ResponseEntity<Result<Direccion>> responseEntityDireccion =
+               restTemplate.exchange(
+                   url + "/direccion",
+                   HttpMethod.POST,
+                   requestEntityDireccion,
+                   new ParameterizedTypeReference<Result<Direccion>>() {}
+               );
+            
+            redirectAttributes.addFlashAttribute("successAddDireccionMessage", "Dirección agregada correctamente");
+
+        } else { // editar la direccion a usuario
+
+            ResponseEntity<Result<Direccion>> responseEntityDireccion =
+               restTemplate.exchange(
+                   url + "/direccion/update",
+                   HttpMethod.PUT,
+                   requestEntityDireccion,
+                   new ParameterizedTypeReference<Result<Direccion>>() {}
+               );
+            
+            redirectAttributes.addFlashAttribute("successUpdateDireccionMessage", "Dirección actualizada correctamente");
+        }
+
+        return "redirect:/usuario/detail/" + idUsuario;
+
+    }
+    
+    
+    @PostMapping("/updateImagen/{idUsuario}")
+    public String UpdateImagen(@PathVariable("idUsuario") int idUsuario, 
+        @RequestParam("imagen") MultipartFile imagenFile) {
+        
+         Usuario usuario = new Usuario();
+         
+        
+        try {
+            //Conversion de imagen;
+            String imagen = Base64.getEncoder().encodeToString(imagenFile.getBytes());
+           
+            usuario.setImagen(imagen);
+            
+            RestTemplate restTemplate = new RestTemplate();
+            
+            HashMap<String, Object> mapa = new HashMap<>();
+            mapa.put("imagen", imagen);
+            
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonString = objectMapper.writeValueAsString(mapa);
+//            String jsonString = JSON.stringify(mapa);
+            
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON); 
+            
+            HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
+            
+            ResponseEntity <Result<Usuario>> responseEntityUpdateImagen =
+               restTemplate.exchange(
+                   url + "/usuario/" + idUsuario,
+                   HttpMethod.PATCH,
+                   requestEntity,
+                   new ParameterizedTypeReference<Result<Usuario>>() {}
+               );
+            Result result = responseEntityUpdateImagen.getBody();
+            
+        } catch (IOException ex) {
+            Logger.getLogger(UsuarioController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return "redirect:/usuario/detail/" + usuario.getIdUsuario();
+    }
+    
+    
+    @PostMapping("filtro")
+    public String IndexFiltro(@RequestParam ("campo") String campo, @RequestParam ("valor") String valor, Model model) {
+        
+        
+//        Result resultJPA =  usuarioJPADAOImplementation.GetAllFilter(campo, valor);
+        
+        RestTemplate restTemplate = new RestTemplate();
+        
+        ResponseEntity<Result<Usuario>> responseEntityUsuario =
+            restTemplate.exchange(
+                url + "/usuario/" + campo + "/" + valor,
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<Result<Usuario>>() {}
+            );
+        
+        Result resultUsuario = responseEntityUsuario.getBody();
+        
+        model.addAttribute("usuarios", resultUsuario.objects);
+        model.addAttribute("errores", new ArrayList<>());
+        model.addAttribute("isCorrect", false);
+        return "UsuarioIndex";
+    
     }
 }
