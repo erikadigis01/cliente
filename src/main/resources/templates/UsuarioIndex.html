@@ -249,38 +249,38 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             
             $(document).on("change", ".status-switch", function () {
 
-            let idUsuario = $(this).data("id");
-            let nuevoStatus = this.checked ? 1 : 0;
+                let idUsuario = $(this).data("id");
+                let nuevoStatus = this.checked ? 1 : 0;
 
-            $.ajax({
-                url: url + 'usuario/updateStatus',
-                type: 'PATCH',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    idUsuario: idUsuario,
-                    status: nuevoStatus
-                }),
-                success: function (res) {
-                    console.log('Status actualizado correctamente');
+                $.ajax({
+                    url: url + 'usuario/updateStatus',
+                    type: 'PATCH',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        idUsuario: idUsuario,
+                        status: nuevoStatus
+                    }),
+                    success: function (res) {
+                        console.log('Status actualizado correctamente');
 
-                    Swal.fire({
-                        icon: "success",
-                        title: "Estado actualizado",
-                        text: res.errorMessage,
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-                },
-                error: function (xhr) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error al actualizar",
-                        text: "No se pudo cambiar el estado"
-                    });
-                }
+                        Swal.fire({
+                            icon: "success",
+                            title: "Estado actualizado",
+                            text: res.errorMessage,
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error al actualizar",
+                            text: "No se pudo cambiar el estado"
+                        });
+                    }
+                });
+
             });
-
-        });
             
             function confirmarEliminacionUsuario(idUsuario){
             Swal.fire({

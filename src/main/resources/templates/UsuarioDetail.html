@@ -78,6 +78,21 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                 <h6 class="h6 d-flex justify-content-start" th:text="${usuario.Sexo}"></h6>
                             </div>
                         </div>
+                        <div class="row ">
+                            <div class="col-4">
+                                <h6 class="h6 text-black-50 d-flex justify-content-start">Status:</h6>
+                            </div>
+                            <div class="col-8">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input status-switch" 
+                                           type="checkbox" 
+                                           role="switch" 
+                                           id="switchCheckChecked" 
+                                           th:attr="data-id=${usuario.IdUsuario}"
+                                           th:checked="${usuario.Status == 1}">
+                                </div>
+                            </div>
+                        </div>
                         <hr><!-- comment -->
                         <div class="row ">
                             <div class="col-4">
@@ -347,7 +362,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
               </div>
             </div>
           </div>
-    </body>
+    
     <script th:if="${successUpdateDireccionMessage}" th:inline="javascript">
         Swal.fire({
             title: [[${successUpdateDireccionMessage}]],
@@ -379,6 +394,41 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <script th:inline="javascript">
         
         let url= "http://localhost:8080/";
+        
+        $(document).on("change", ".status-switch", function () {
+
+                let idUsuario = $(this).data("id");
+                let nuevoStatus = this.checked ? 1 : 0;
+
+                $.ajax({
+                    url: url + 'usuario/updateStatus',
+                    type: 'PATCH',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        idUsuario: idUsuario,
+                        status: nuevoStatus
+                    }),
+                    success: function (res) {
+                        console.log('Status actualizado correctamente');
+
+                        Swal.fire({
+                            icon: "success",
+                            title: "Estado actualizado",
+                            text: res.errorMessage,
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error al actualizar",
+                            text: "No se pudo cambiar el estado"
+                        });
+                    }
+                });
+
+            });
         
         function confirmarEliminacionUsuario(idUsuario){
             
@@ -596,4 +646,5 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             draggable: true
         });
     </script>
+    </body> 
 </html>
