@@ -7,6 +7,7 @@ import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.Pais;
 import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.Result;
 import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.Roll;
 import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.Usuario;
+import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.ValidationGroup;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -29,6 +30,7 @@ import static org.springframework.http.converter.json.Jackson2ObjectMapperBuilde
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -93,7 +95,7 @@ public class UsuarioController {
     @GetMapping("/detail/{idUsuario}")
     public String GetById(@PathVariable("idUsuario") int idUsuario, Model model) {
         
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate(); 
         
         String id = Integer.toString(idUsuario);
         ResponseEntity<Result<Usuario>> responseEntityUsuario =
@@ -413,5 +415,57 @@ public class UsuarioController {
         model.addAttribute("isCorrect", false);
         return "UsuarioIndex";
     
+    }
+    
+    @PostMapping("/detail")
+    public String Update(@Validated(ValidationGroup.OnUpdate.class) @ModelAttribute("usuario") Usuario usuario,
+            BindingResult bindingResult, Model model,
+            RedirectAttributes redirectAttributes) {
+        
+        RestTemplate restTemplate = new RestTemplate();
+
+        if (bindingResult.hasErrors()) {
+            
+             ResponseEntity<Result<Roll>> responseEntityRoll =
+            restTemplate.exchange(
+                url + "/roll",
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<Result<Roll>>() {}
+            );
+            
+            Result resultRoll = responseEntityRoll.getBody();
+            
+            model.addAttribute("error", "Error al actualizar usuario: " );
+            model.addAttribute("rolles", resultRoll.objects);
+            redirectAttributes.addFlashAttribute("errorMessage", "El usuario " + usuario.getUserName() + "no se creo" + "Error:" + bindingResult.getAllErrors().toString());
+            
+        } else {
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON); // O el tipo que necesites
+            HttpEntity<Usuario> requestEntity = new HttpEntity<>(usuario, headers);
+            
+            
+            ResponseEntity<Result<Usuario>> responseEntityUsuario =
+               restTemplate.exchange(
+                   url + "/usuario/update",
+                   HttpMethod.PUT,
+                   requestEntity,
+                   new ParameterizedTypeReference<Result<Usuario>>() {}
+               );
+            
+            Result result = responseEntityUsuario.getBody();
+            Usuario usuarioUpdate = (Usuario) result.object;
+            
+             if (result.correct) {
+                redirectAttributes.addFlashAttribute("successMessage", "El usuario " + usuarioUpdate.getNombre() + "se actualizo con exito.");
+                
+
+            }
+        }
+        
+        return "redirect:/usuario/detail/" + usuario.getIdUsuario();
+
     }
 }
