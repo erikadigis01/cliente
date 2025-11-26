@@ -98,6 +98,10 @@ public class Usuario {
     @JsonProperty("Direccion")
     public List<Direccion> Direccion;
     
+    
+    @JsonProperty("status")
+    private Integer Status;
+    
    
     
     public Usuario(){
@@ -105,7 +109,7 @@ public class Usuario {
     }
     
     public Usuario(int IdUsuario, String UserName, String Nombre, String ApellidoPaterno, String ApellidoMaterno, String Email, 
-           String Password, Date FechaNacimiento, char Sexo, String Telefono, String Celular, String Curp, String Imagen ){
+           String Password, Date FechaNacimiento, char Sexo, String Telefono, String Celular, String Curp, String Imagen, Integer Status){
         this.IdUsuario = IdUsuario;
         this.UserName = UserName;
         this.Nombre = Nombre;
@@ -119,6 +123,7 @@ public class Usuario {
         this.Celular = Celular;
         this.Curp = Curp;
         this.Imagen = Imagen;
+        this.Status = Status;
       
     }
     
@@ -215,6 +220,16 @@ public class Usuario {
     public String getImagen(){
     
         return Imagen;
+        
+    }
+    public void setStatus(Integer Status){
+        
+        this.Status = Status;
+    
+    }
+    public Integer getStatus(){
+    
+        return Status;
         
     }
     

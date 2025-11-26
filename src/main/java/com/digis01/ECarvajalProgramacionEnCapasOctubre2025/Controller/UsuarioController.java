@@ -74,7 +74,7 @@ public class UsuarioController {
             Result resultUsuario = responseEntityUsuario.getBody();
             
             
-            
+            model.addAttribute("Usuario", new Usuario()); 
             model.addAttribute("usuarios", resultUsuario.objects);
          }
             else {
@@ -388,24 +388,27 @@ public class UsuarioController {
     
     
     @PostMapping("filtro")
-    public String IndexFiltro(@RequestParam ("campo") String campo, @RequestParam ("valor") String valor, Model model) {
-        
-        
-//        Result resultJPA =  usuarioJPADAOImplementation.GetAllFilter(campo, valor);
+    public String filtrar(@ModelAttribute("Usuario") Usuario usuario,
+                      Model model) {
         
         RestTemplate restTemplate = new RestTemplate();
         
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        
+        HttpEntity<Usuario> requestUsuario = new HttpEntity<>(usuario, headers);
+        
         ResponseEntity<Result<Usuario>> responseEntityUsuario =
-            restTemplate.exchange(
-                url + "/usuario/" + campo + "/" + valor,
-                HttpMethod.GET,
-                HttpEntity.EMPTY,
-                new ParameterizedTypeReference<Result<Usuario>>() {}
-            );
+               restTemplate.exchange(
+                   url + "/usuario/dinamico",
+                   HttpMethod.POST,
+                   requestUsuario,
+                   new ParameterizedTypeReference<Result<Usuario>>() {}
+               );
+            
+        Result result = responseEntityUsuario.getBody();
         
-        Result resultUsuario = responseEntityUsuario.getBody();
-        
-        model.addAttribute("usuarios", resultUsuario.objects);
+        model.addAttribute("usuarios", result.objects);
         model.addAttribute("errores", new ArrayList<>());
         model.addAttribute("isCorrect", false);
         return "UsuarioIndex";

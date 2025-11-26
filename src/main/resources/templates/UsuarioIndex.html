@@ -4,10 +4,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to c
 Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
 -->
 <html xmlns:th="http://www.thymeleaf.org"
-      xmls:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{Layout}">
 
-    <body class="container bg-light" layout:fragment="content">
+    <section class="container bg-light" layout:fragment="content">
         <header>
             <div class="d-flex align-items-center p-3 my-4 text-white  bg-primary rounded shadow-sm">
                 <h3 class="3h-3">Usuarios</h3>
@@ -26,7 +26,16 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                 <span class="text-success">No existen errores en tu archivo</span>
                             </div>-->
                         </div>
+                        <div class="col-1">
+                            <button class="btn btn-outline-secondary"
+                                    type="button" data-bs-toggle="modal" 
+                                    data-bs-target="#modalBusqueda">
+                                Buscar
+
+                            </button> 
+                        </div>
                         <div class="col-1 ">
+                            
                             <button class="btn btn-warning"
                                     type="button" data-bs-toggle="modal" 
                                     data-bs-target="#modalCarga">
@@ -38,26 +47,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                             <!--<span class="">No hay errores</span>-->
                              <a class="btn btn-success" th:href="@{/usuario/cargamasiva/procesar}">Procesar</a>
                         </div>
-                        <form th:action="@{filtro}"  method="post" class="row" id="filtro">
-
-                            <div class="col-3">
-                                <select class="form-select" th:field="${campo}">
-                                    <option value="0" selected>Buscar por</option>
-                                    <option value="Nombre">Nombre</option>
-                                    <option value="ApellidoPaterno">Apellido Paterno</option>
-                                    <option value="ApellidoMaterno">Apellido Materno</option>
-                                </select>
-                            </div>
-
-                            <div class="col-3">
-                                <input type="text" class="form-control" th:field="{valor}" id="buscarCampo" placeholder="Campo">
-                            </div>
-
-                            <div class="col-1">
-                                <button type="submit" class="btn btn-secondary" for="filtro">Buscar</button>
-                            </div>
-
-                      </form>
+                       
 
                     </div>
 
@@ -93,6 +83,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                     Contacto
                                 </th>
                                 <th scope="col-1" class="text-black-50">Roll</th>
+                                <th scope="col-1" class="text-black-50">Status</th>
                                 <th scope="col" class="text-black-50">Accion</th>
                             </tr>
                         </thead>
@@ -120,13 +111,23 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                 <td class="">
                                     <div class="badge text-bg-secondary"><span th:text="${usuario.Roll.NombreRoll}"></span></div>
                                 </td>
+                                <td class="col-1">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input status-switch" 
+                                               type="checkbox" 
+                                               role="switch" 
+                                               id="switchCheckChecked" 
+                                               th:attr="data-id=${usuario.IdUsuario}"
+                                               th:checked="${usuario.Status == 1}">
+                                    </div>
+                                </td>
                                 <td class=" col-3">
                                     <a type="button" class="btn btn-primary btn-sm" th:href="@{/usuario/detail/{id}(id=${usuario.IdUsuario})}"> 
                                         <i class="bi bi-pencil-square"></i>
-                                        Editar
+                                        
                                     </a>
                                     <button type="button" class="btn btn-danger btn-sm" th:onclick="|confirmarEliminacionUsuario(${usuario.IdUsuario})|"> 
-                                        <i class="bi bi-trash3-fill"> Eliminar</i>
+                                        <i class="bi bi-trash3-fill"></i>
                                     </button>
                                 </td>
                             </tr> 
@@ -140,7 +141,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title justify-content-center" id="modalCarga"> Cargar Archivo</h5>
+                        <h5 class="modal-title justify-content-center" id="modalCargaLabel"> Cargar Archivo</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -158,7 +159,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                     <span>Escoger archivo</span>
                                 </label>
                                 <p id="nombre-archivo" class="mt-2 text-muted small"></p>
-
+                            </div>
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -168,10 +169,119 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="modalBusqueda" tabindex="-1" aria-labelledby="modalBusquedaLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalBusquedaLabel">Buscar Usuario</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <form class="p-4" th:action="@{/usuario/filtro}" th:object="${Usuario}" method="post" id="filtroForm">
+
+                                <div class="mb-3">
+                                    <label class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" name="Nombre"
+                                           placeholder="Ingrese el nombre"
+                                           th:field="*{Nombre}">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Apellido Paterno</label>
+                                    <input type="text" class="form-control" name="ApellidoPaterno"
+                                           placeholder="Ingrese el apellido paterno"
+                                           th:field="*{ApellidoPaterno}">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Apellido Materno</label>
+                                    <input type="text" class="form-control" name="ApellidoMaterno"
+                                           placeholder="Ingrese el apellido materno"
+                                           th:field="*{ApellidoMaterno}">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Roll</label>
+                                    <input type="text" class="form-control" name="Roll.NombreRoll"
+                                           placeholder="Ingrese el rol"
+                                           th:field="*{Roll.NombreRoll}">
+                                </div>
+
+                                <div class="mb-3">
+                                    <input type="hidden" th:field="*{Status}" value="0">
+                                    <label class="form-label d-block">Status</label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input"
+                                            type="checkbox"
+                                            role="switch"
+                                            id="switchStatus"
+                                            th:field="*{Status}"
+                                            value="1">
+
+                                        <label class="form-check-label" for="switchStatus">
+                                            Activo (1)
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary" form="filtroForm">Buscar</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
         <footer>
         </footer>
             
         <script>
+            
+            let url = "http://localhost:8080/";
+            
+            $(document).on("change", ".status-switch", function () {
+
+            let idUsuario = $(this).data("id");
+            let nuevoStatus = this.checked ? 1 : 0;
+
+            $.ajax({
+                url: url + 'usuario/updateStatus',
+                type: 'PATCH',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    idUsuario: idUsuario,
+                    status: nuevoStatus
+                }),
+                success: function (res) {
+                    console.log('Status actualizado correctamente');
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Estado actualizado",
+                        text: res.errorMessage,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error al actualizar",
+                        text: "No se pudo cambiar el estado"
+                    });
+                }
+            });
+
+        });
+            
             function confirmarEliminacionUsuario(idUsuario){
             Swal.fire({
             title: "Estas seguro de eliminar este usuario?",
@@ -195,7 +305,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         </script>
 
 
-    </body>
+    
 <!--    <script th:if="${successErrorArchivo}">
         
         alert("Entro a la funcion");
@@ -239,5 +349,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 draggable: true
         });
     </script>
+    </section>
 </html>
 
