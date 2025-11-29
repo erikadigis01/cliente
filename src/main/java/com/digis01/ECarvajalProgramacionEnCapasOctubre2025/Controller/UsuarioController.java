@@ -2,6 +2,7 @@ package com.digis01.ECarvajalProgramacionEnCapasOctubre2025.Controller;
 
 
 import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.Direccion;
+import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.ErrorCarga;
 import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.Estado;
 import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.Pais;
 import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.Result;
@@ -9,9 +10,13 @@ import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.Roll;
 import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.Usuario;
 import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.ValidationGroup;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.io.File;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect.Type;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -78,6 +83,7 @@ public class UsuarioController {
             
             model.addAttribute("Usuario", new Usuario()); 
             model.addAttribute("usuarios", resultUsuario.objects);
+            model.addAttribute("errores", null);
          }
             else {
             
@@ -379,6 +385,7 @@ public class UsuarioController {
                    requestEntity,
                    new ParameterizedTypeReference<Result<Usuario>>() {}
                );
+            
             Result result = responseEntityUpdateImagen.getBody();
             
         } catch (IOException ex) {
@@ -466,6 +473,61 @@ public class UsuarioController {
         }
         
         return "redirect:/usuario/detail/" + usuario.getIdUsuario();
+
+    }
+    
+    @PostMapping("enviar")
+    public String CargaMasiva(@RequestParam("archivo") MultipartFile archivo,
+            RedirectAttributes redirectAttributes, Model model, HttpSession session) {
+        
+        Result result = new Result();
+        RestTemplate restTemplate = new RestTemplate();
+        
+        if(archivo != null) {
+            
+            try {
+                
+                byte[] fileBytes = archivo.getBytes();
+                
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON); 
+                
+                
+                HttpEntity<byte[]> requestEntity = new HttpEntity<byte[]>(fileBytes, headers);
+                
+                ResponseEntity <Result> responseEntity =
+                restTemplate.exchange(
+                    url + "/usuario/cargaMasiva",
+                    HttpMethod.POST,
+                    requestEntity,
+                    new ParameterizedTypeReference<Result>() {}
+                );
+                
+            Result resultCarga = responseEntity.getBody();
+            if (responseEntity.getStatusCode().value() == 200) {
+                
+                resultCarga.correct = true;
+                model.addAttribute("errores", resultCarga.object);
+                
+            }
+                
+            } catch (IOException ex) {
+            
+                result.correct = false;
+                result.errorMessage = ex.getLocalizedMessage();
+                result.ex = ex;
+                
+            }
+        
+            System.out.print("EL archivo llego");
+            
+        } else {
+        
+            return "redirect:/usuario?error= el archivo esta vacio";
+            
+        }
+
+        return "redirect:/usuario";
 
     }
 }

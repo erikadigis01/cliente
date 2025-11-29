@@ -21,10 +21,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                 <ul th:each="error, iterStat: ${errores}">
                                     <li th:text="${error.descripcion}"></li>
                                 </ul>
-                            </div>-->
-<!--                            <div th:if="${isCorrect == true}">
-                                <span class="text-success">No existen errores en tu archivo</span>
-                            </div>-->
+                            </div> -->
+                            <div th:if="${errores != null}">
+                                <span class="text-success">Hay errores en tu archivo</span>
+                                <span th:text="${errores}"></span>
+                            </div>
                         </div>
                         <div class="col-1">
                             <button class="btn btn-outline-secondary"
@@ -43,9 +44,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
                             </button> 
                         </div>
-                        <div th:if="${isCorrect == true}" class="col-1">
+                        <div  class="col-1">
                             <!--<span class="">No hay errores</span>-->
-                             <a class="btn btn-success" th:href="@{/usuario/cargamasiva/procesar}">Procesar</a>
+                             <button type="submit" class="btn btn-success">Procesar</button>
                         </div>
                        
 
@@ -145,7 +146,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form class="p-4 justify-content-center my-3"  th:action="@{/usuario/cargamasiva}" method="post" enctype="multipart/form-data" id="cargaForm">                 
+                        <form class="p-4 justify-content-center my-3"  th:action="@{usuario/enviar}" method="post" enctype="multipart/form-data" id="cargaForm">                 
                             <div class="row justify-content-center text-center">
                                 <label  class="form-label d-block mb-2">Selecciona un archivo (.txt o .xlsx)</label>
                                 <input type="file" 
