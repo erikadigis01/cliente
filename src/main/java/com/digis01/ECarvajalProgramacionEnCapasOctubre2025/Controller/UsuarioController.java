@@ -55,22 +55,40 @@ public class UsuarioController {
     
     public String url = "http://localhost:8080";
     
+    private Usuario getCurrentUser(HttpSession session) {
+        Usuario usuario = new Usuario();
+        usuario.setIdUsuario((Integer) session.getAttribute("userId"));
+        usuario.setUserName((String) session.getAttribute("username"));
+        return usuario;
+    }
    
+    private HttpHeaders getAuthHeaders(HttpSession session) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        String token = (String) session.getAttribute("token");
+        if (token != null) {
+            headers.set("Authorization", "Bearer " + token);
+        }
+
+        return headers;
+    }
+    
     @GetMapping
-    public String Index(Model model) {
+    public String Index(Model model, HttpSession session) {
         
-        
+        HttpHeaders headers = getAuthHeaders(session);
+        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
         
         RestTemplate restTemplate = new RestTemplate();
         
         ResponseEntity<Result<Usuario>> responseEntityUsuario =
-            restTemplate.exchange(
-                url + "/usuario",
-                HttpMethod.GET,
-                HttpEntity.EMPTY,
-                new ParameterizedTypeReference<Result<Usuario>>() {}
-            );
-        
+        restTemplate.exchange(
+            url + "/usuario",
+            HttpMethod.GET,
+            requestEntity,
+            new ParameterizedTypeReference<Result<Usuario>>() {}
+        );
 
         String error = "error usuario : " + responseEntityUsuario.getBody().errorMessage;
 //        String error = responseEntityUsuario.getBody().errorMessage;
@@ -99,8 +117,14 @@ public class UsuarioController {
     
     
     @GetMapping("/detail/{idUsuario}")
-    public String GetById(@PathVariable("idUsuario") int idUsuario, Model model) {
+    public String GetById(@PathVariable("idUsuario") int idUsuario, Model model, HttpSession session) {
         
+        if (session.getAttribute("token") == null) {
+            return "redirect:/auth/login";
+        }
+        HttpHeaders headers = getAuthHeaders(session);
+        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
+    
         RestTemplate restTemplate = new RestTemplate(); 
         
         String id = Integer.toString(idUsuario);
@@ -108,21 +132,21 @@ public class UsuarioController {
             restTemplate.exchange(
                 url + "/usuario/" + id,
                 HttpMethod.GET,
-                HttpEntity.EMPTY,
+                requestEntity,
                 new ParameterizedTypeReference<Result<Usuario>>() {}
             );
          ResponseEntity<Result<Roll>> responseEntityRoll =
             restTemplate.exchange(
                 url + "/roll",
                 HttpMethod.GET,
-                HttpEntity.EMPTY,
+                requestEntity,
                 new ParameterizedTypeReference<Result<Roll>>() {}
             );
           ResponseEntity<Result<Pais>> responseEntityPais =
             restTemplate.exchange(
                 url + "/pais",
                 HttpMethod.GET,
-                HttpEntity.EMPTY,
+                requestEntity,
                 new ParameterizedTypeReference<Result<Pais>>() {}
             );
         
@@ -150,15 +174,18 @@ public class UsuarioController {
     }
     
     @GetMapping("delete/{id}")
-    public String Delete(@PathVariable("id") int id, Model model, RedirectAttributes redirectAttributes) {
-
+    public String Delete(@PathVariable("id") int id, Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+        
+        HttpHeaders headers = getAuthHeaders(session);
+        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
+        
         RestTemplate restTemplate = new RestTemplate();
         
         ResponseEntity<Result<Usuario>> responseEntityUsuario =
             restTemplate.exchange(
                 url + "/usuario/" + id,
                 HttpMethod.DELETE,
-                HttpEntity.EMPTY,
+                requestEntity,
                 new ParameterizedTypeReference<Result<Usuario>>() {}
             );
         
@@ -180,7 +207,10 @@ public class UsuarioController {
     }
     
     @GetMapping("add")
-    public String Add(Model model) {
+    public String Add(Model model, HttpSession session) {
+        HttpHeaders headers = getAuthHeaders(session);
+        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
+        
         
         RestTemplate restTemplate = new RestTemplate();
         
@@ -188,14 +218,14 @@ public class UsuarioController {
             restTemplate.exchange(
                 url + "/roll",
                 HttpMethod.GET,
-                HttpEntity.EMPTY,
+                requestEntity,
                 new ParameterizedTypeReference<Result<Roll>>() {}
             );
          ResponseEntity<Result<Pais>> responseEntityPais =
             restTemplate.exchange(
                 url + "/pais",
                 HttpMethod.GET,
-                HttpEntity.EMPTY,
+                requestEntity,
                 new ParameterizedTypeReference<Result<Pais>>() {}
             );
         
