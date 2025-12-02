@@ -7,15 +7,16 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
       xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{Layout}">
 
-    <section class="container bg-light" layout:fragment="content">
-        <header>
-            <div class="d-flex align-items-center p-3 my-4 text-white  bg-primary rounded shadow-sm">
-                <h3 class="3h-3">Usuarios</h3>
-            </div>
+    <section class="container my-5" layout:fragment="content">
+        <section>
             <div> 
                 <form>
-                    <div class="row justify-content-end">
-                        <div class="col-2">
+                    <div class="row d-flex justify-content-between m-1">
+                        <div class="col-8 justify-content-start text-secondary">
+                            <h3 class="h-3">Usuarios</h3>
+                        </div>
+                        <div class="col-auto d-flex align-items-end">
+                            
 <!--                            <div th:if="${errores.size() != 0}">
                                 <span class="text-danger">Existen errores en tu archivo</span>
                                 <ul th:each="error, iterStat: ${errores}">
@@ -27,7 +28,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                 <span th:text="${errores}"></span>
                             </div>
                         </div>
-                        <div class="col-1">
+                        <div class="col-auto d-flex align-items-end">
                             <button class="btn btn-outline-secondary"
                                     type="button" data-bs-toggle="modal" 
                                     data-bs-target="#modalBusqueda">
@@ -35,7 +36,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
                             </button> 
                         </div>
-                        <div class="col-1 ">
+                        <div class="col-auto d-flex align-items-end">
                             
                             <button class="btn btn-warning"
                                     type="button" data-bs-toggle="modal" 
@@ -44,7 +45,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
                             </button> 
                         </div>
-                        <div  class="col-1">
+                        <div  class="col-auto d-flex align-items-end">
                             <!--<span class="">No hay errores</span>-->
                              <button type="submit" class="btn btn-success">Procesar</button>
                         </div>
@@ -55,8 +56,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 </form>
 
             </div>
-        </header>
-        <main>
+        </section>
+        <section>
             <div class="my-3 p-3 bg-body rounded shadow-sm">
                 <div class="row justify-content-end">
                     <div class="col-2 d-flex justify-content-end">
@@ -137,7 +138,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     
                 </div>
             </div>
-        </main>
+        </section>
         <div class="modal fade" id="modalCarga" tabindex="-1" aria-labelledby="modalCargaLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">

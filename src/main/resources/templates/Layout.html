@@ -19,7 +19,21 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
 
 
     <body>
-       
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-primary bg-primary shadow-sm">
+                <div class="container">
+                    <a class="navbar-brand fw-bold" href="#">
+                    </a>
+                    <div class="ms-auto">
+                        <form th:action="@{logout}" method="post">
+                            <button  type="submit" class="btn btn-light px-4">
+                                Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </nav>
+        </header>
         <main layout:fragment="content"></main>
     </body>
 </html>
