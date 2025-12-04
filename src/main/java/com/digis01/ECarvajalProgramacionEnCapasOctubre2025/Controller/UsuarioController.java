@@ -234,7 +234,7 @@ public class UsuarioController {
          
         model.addAttribute("rolles", resultRoll.objects);
         model.addAttribute("paises", resultPais.objects);
-        
+        model.addAttribute("session", session);
         Usuario usuario = new Usuario();
         model.addAttribute("Usuario", usuario);
         
@@ -248,7 +248,8 @@ public class UsuarioController {
     public String Add(@Valid @ModelAttribute("Usuario") Usuario usuario,
             BindingResult bindingResult,
             Model model, RedirectAttributes redirectAttributes,
-            @RequestParam("imagenFile") MultipartFile imagenFile) {
+            @RequestParam("imagenFile") MultipartFile imagenFile,
+            HttpSession session) {
 
 
         if (imagenFile != null) {
@@ -278,7 +279,7 @@ public class UsuarioController {
         
         if (!bindingResult.hasErrors()) {
             
-            HttpHeaders headers = new HttpHeaders();
+            HttpHeaders headers = getAuthHeaders(session);
             headers.setContentType(MediaType.APPLICATION_JSON); // O el tipo que necesites
             HttpEntity<Usuario> requestEntity = new HttpEntity<>(usuario, headers);
             
