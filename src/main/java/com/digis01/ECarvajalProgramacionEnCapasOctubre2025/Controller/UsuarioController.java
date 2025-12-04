@@ -105,6 +105,7 @@ public class UsuarioController {
             
             model.addAttribute("Usuario", new Usuario()); 
             model.addAttribute("usuarios", resultUsuario.objects);
+            model.addAttribute("session", session);
             model.addAttribute("errores", null);
          }
             else {

@@ -245,9 +245,12 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         <footer>
         </footer>
             
-        <script>
+        <script th:inline="javascript">
             
             let url = "http://localhost:8080/";
+             var token = [[${session.token}]]; 
+             var userId = [[${session.userId}]];
+             var username = [[${session.username}]];
             
             $(document).on("change", ".status-switch", function () {
 
@@ -258,6 +261,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     url: url + 'usuario/updateStatus',
                     type: 'PATCH',
                     contentType: 'application/json',
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     data: JSON.stringify({
                         idUsuario: idUsuario,
                         status: nuevoStatus
