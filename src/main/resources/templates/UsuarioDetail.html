@@ -350,6 +350,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                              <label for="numeroExterior" class="form-label">Numero Exterior</label>
                               <input type="number" class="form-control" id="numeroExterior" th:field = "*{NumeroExterior}">
                          </div>
+                          <input th:value="${session}" class="d-none">
                      </div>
 
                   </form>
@@ -394,6 +395,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
     <script th:inline="javascript">
         
         let url= "http://localhost:8080/";
+        var token = [[${session.token}]]; 
+        var userId = [[${session.userId}]];
+        var username = [[${session.username}]];
+        
         
         $(document).on("change", ".status-switch", function () {
 
@@ -404,6 +409,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     url: url + 'usuario/updateStatus',
                     type: 'PATCH',
                     contentType: 'application/json',
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     data: JSON.stringify({
                         idUsuario: idUsuario,
                         status: nuevoStatus
@@ -476,36 +484,28 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 const file = fileInput.files[0];
 
                 reader.onload = function(e) {
-                    selectedImage.src = e.target.result;
-                    
-                    const userId = [[${usuario.idUsuario}]];
-                    const formData = new FormData();
-                    formData.append('imagen', file);
-                    
-                    $.ajax({
-                        url:"/usuario/updateImagen/"+ userId,
-                        type:"POST",
-                        processData : false,
-                        data: formData,
-                        contentType : false,
-                        success: function(data, textStatus, jqXHR){
-                           Swal.fire ({
-                               title : "Foto actualizada",
-                               daggrable : true,
-                               icon : "success"
-                           });
-                        }
-                        ,
-                        error: function (jqXHR, textStatus, errorThrown) {
-                               Swal.fire ({
-                               title : "Foto  no actualizada",
-                               daggrable : true,
-                               icon : "error"
-                           });
-                        }
-                    });
-                    alert(usuario.Imagen);
-                };
+                selectedImage.src = e.target.result;
+
+                const userId = [[${usuario.idUsuario}]];
+                const base64Image = e.target.result.split(",")[1];
+
+                $.ajax({
+                    url: "http://localhost:8080/usuario/" + userId,
+                    type: "PATCH",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    contentType: "application/json",
+                    data: JSON.stringify({ imagen: base64Image }),
+                    success: function(data) {
+                        Swal.fire({ title: "Foto actualizada", icon: "success" });
+                    },
+                    error: function() {
+                        Swal.fire({ title: "Foto no actualizada", icon: "error" });
+                    }
+                });
+            };
+
 
                 reader.readAsDataURL(fileInput.files[0]);
             }
@@ -519,10 +519,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             $("#numeroInterior").val("");
             $("#numeroExterior").val("");
             $("#codigoPostal").val("");
-            $("#ddlcolonia").val("");
-            ("#ddlmunicipio").val("");
-            ("#ddlestado").val("");
-            ("#ddlpais").val("");
+            $("#ddlcolonia").val(0);
+            $("#ddlmunicipio").val(0);
+            $("#ddlestado").val(0);
+            $("#ddlpais").val(0);
         }
         
         function FormDireccionEditable(idDireccion){
@@ -532,23 +532,26 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 url: url + "direccion/"+idDireccion,
                 type:"GET",
                 dataType: "json",
+                 headers: {
+                    "Authorization": "Bearer " + token
+                },
                 success: function(data, textStatus, jqXHR){
                     $("#idDireccion").val(idDireccion);
                     $("#calle").val( data.object.calle );
                     $("#numeroInterior").val(data.object.numeroInterior);
                     $("#numeroExterior").val(data.object.numeroExterior);
-                    $("#codigoPostal").val(data.object.colonia.codigoPostal);
+                    $("#codigoPostal").val(data.object.Colonia.codigoPostal);
                      setTimeout(() => {
-                         $("#ddlestado").val(data.object.colonia.municipio.estado.idEstado).change();
+                         $("#ddlestado").val(data.object.Colonia.Municipio.Estado.idEstado).change();
                          setTimeout(() => {
-                              $("#ddlmunicipio").val(data.object.colonia.municipio.idMunicipio).change();
+                              $("#ddlmunicipio").val(data.object.Colonia.Municipio.idMunicipio).change();
                                setTimeout(() => {
-                                   $("#ddlcolonia").val(data.object.colonia.idColonia).change();
+                                   $("#ddlcolonia").val(data.object.Colonia.idColonia).change();
                                    
                                }, 300);
                          }, 300);
                      }, 300);
-                    $("#ddlpais").val(data.object.colonia.municipio.estado.pais.idPais).change();
+                    $("#ddlpais").val(data.object.Colonia.Municipio.Estado.Pais.idPais).change();
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                         alert("no hay nada por cargar :/");
@@ -563,13 +566,14 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         
         $(document).ready(function () {
             
-
-
             $("#ddlpais").change(function () {
                 $.ajax({
                     type: 'GET',
                     url: url + "estado/pais/" + $("#ddlpais").val(),
                     dataType: "json",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     success: function (data, textStatus, jqXHR) {
 
                         $("#ddlestado").empty();
@@ -591,6 +595,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     type: 'GET',
                     url: url + "municipio/estado/" + $("#ddlestado").val(),
                     dataType: "json",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     success: function (data, textStatus, jqXHR) {
 
                         $("#ddlmunicipio").empty();
@@ -610,6 +617,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     type: 'GET',
                     url: url + "colonia/municipio/" + $("#ddlmunicipio").val(),
                     dataType: "json",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
                     success: function (data, textStatus, jqXHR) {
 
                         $("#ddlcolonia").empty();

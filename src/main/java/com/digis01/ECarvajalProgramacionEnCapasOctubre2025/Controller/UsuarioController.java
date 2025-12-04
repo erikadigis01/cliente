@@ -77,6 +77,10 @@ public class UsuarioController {
     @GetMapping
     public String Index(Model model, HttpSession session) {
         
+        if (session.getAttribute("token") == null) {
+            return "redirect:/auth/login";
+        }
+        
         HttpHeaders headers = getAuthHeaders(session);
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
         
@@ -161,6 +165,7 @@ public class UsuarioController {
             model.addAttribute("usuario", resultUsuario.object);
             model.addAttribute("rolles", resultRoll.objects);
             model.addAttribute("paises", resultPais.objects);
+            model.addAttribute("session", session);
             model.addAttribute("direccion", new Direccion());
             
             return "UsuarioDetail";
@@ -175,6 +180,10 @@ public class UsuarioController {
     
     @GetMapping("delete/{id}")
     public String Delete(@PathVariable("id") int id, Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+        
+        if (session.getAttribute("token") == null) {
+            return "redirect:/auth/login";
+        }
         
         HttpHeaders headers = getAuthHeaders(session);
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
@@ -208,6 +217,11 @@ public class UsuarioController {
     
     @GetMapping("add")
     public String Add(Model model, HttpSession session) {
+        
+        if (session.getAttribute("token") == null) {
+            return "redirect:/auth/login";
+        }
+        
         HttpHeaders headers = getAuthHeaders(session);
         HttpEntity<?> requestEntity = new HttpEntity<>(headers);
         
@@ -251,7 +265,10 @@ public class UsuarioController {
             @RequestParam("imagenFile") MultipartFile imagenFile,
             HttpSession session) {
 
-
+        if (session.getAttribute("token") == null) {
+            return "redirect:/auth/login";
+        }
+        
         if (imagenFile != null) {
 
             try {
@@ -312,8 +329,16 @@ public class UsuarioController {
     @GetMapping("{idUsuario}/deleteDireccion/{idDireccion}")
     public String DeleteDireccion(@PathVariable("idDireccion") int idDireccion,
             @PathVariable("idUsuario") int idUsuario,
-            Model model, RedirectAttributes redirectAttributes) {
+            Model model, RedirectAttributes redirectAttributes,
+            HttpSession session) {
 
+        if (session.getAttribute("token") == null) {
+            return "redirect:/auth/login";
+        }
+        
+        HttpHeaders headers = getAuthHeaders(session);
+        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
+    
         
         RestTemplate restTemplate = new RestTemplate();
         
@@ -321,7 +346,7 @@ public class UsuarioController {
             restTemplate.exchange(
                 url + "/direccion/" + idDireccion,
                 HttpMethod.DELETE,
-                HttpEntity.EMPTY,
+                requestEntity,
                 new ParameterizedTypeReference<Result>() {}
             );
         Result resultDireccion = responseEntityDireccion.getBody();
@@ -339,15 +364,20 @@ public class UsuarioController {
     @PostMapping("actiondireccion/{idUsuario}")
     public String ActionDireccion(@PathVariable("idUsuario") int idUsuario, @ModelAttribute("direccion") Direccion direccion,
             BindingResult bindingResult, Model model,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes,
+            HttpSession session) {
+        
+         if (session.getAttribute("token") == null) {
+            return "redirect:/auth/login";
+        }
         
         direccion.Usuario = new Usuario();
         direccion.Usuario.setIdUsuario(idUsuario);
         
         RestTemplate restTemplate = new RestTemplate();
         
-        HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON); // O el tipo que necesites
+        HttpHeaders headers = getAuthHeaders(session);
+            headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<Direccion> requestEntityDireccion = new HttpEntity<>(direccion, headers);
             
 
@@ -383,7 +413,8 @@ public class UsuarioController {
     
     @PostMapping("/updateImagen/{idUsuario}")
     public String UpdateImagen(@PathVariable("idUsuario") int idUsuario, 
-        @RequestParam("imagen") MultipartFile imagenFile) {
+        @RequestParam("imagen") MultipartFile imagenFile,
+        HttpSession session) {
         
          Usuario usuario = new Usuario();
          
@@ -403,8 +434,10 @@ public class UsuarioController {
             String jsonString = objectMapper.writeValueAsString(mapa);
 //            String jsonString = JSON.stringify(mapa);
             
-            
-            HttpHeaders headers = new HttpHeaders();
+            if (session.getAttribute("token") == null) {
+            return "redirect:/auth/login";
+        }
+        HttpHeaders headers = getAuthHeaders(session);
             headers.setContentType(MediaType.APPLICATION_JSON); 
             
             HttpEntity<String> requestEntity = new HttpEntity<>(jsonString, headers);
@@ -429,11 +462,15 @@ public class UsuarioController {
     
     @PostMapping("filtro")
     public String filtrar(@ModelAttribute("Usuario") Usuario usuario,
-                      Model model) {
+                      Model model,  HttpSession session) {
+        
+        if (session.getAttribute("token") == null) {
+            return "redirect:/auth/login";
+        }
         
         RestTemplate restTemplate = new RestTemplate();
         
-        HttpHeaders headers = new HttpHeaders();
+        HttpHeaders headers = getAuthHeaders(session);
         headers.setContentType(MediaType.APPLICATION_JSON);
         
         HttpEntity<Usuario> requestUsuario = new HttpEntity<>(usuario, headers);
@@ -458,17 +495,24 @@ public class UsuarioController {
     @PostMapping("/detail")
     public String Update(@Validated(ValidationGroup.OnUpdate.class) @ModelAttribute("usuario") Usuario usuario,
             BindingResult bindingResult, Model model,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes, HttpSession session) {
+        
+        if (session.getAttribute("token") == null) {
+            return "redirect:/auth/login";
+        }
+        
+        HttpHeaders headers = getAuthHeaders(session);
+        HttpEntity<?> requestEntity = new HttpEntity<>(headers);
         
         RestTemplate restTemplate = new RestTemplate();
 
         if (bindingResult.hasErrors()) {
             
-             ResponseEntity<Result<Roll>> responseEntityRoll =
+            ResponseEntity<Result<Roll>> responseEntityRoll =
             restTemplate.exchange(
                 url + "/roll",
                 HttpMethod.GET,
-                HttpEntity.EMPTY,
+                requestEntity,
                 new ParameterizedTypeReference<Result<Roll>>() {}
             );
             
@@ -480,16 +524,16 @@ public class UsuarioController {
             
         } else {
             
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON); // O el tipo que necesites
-            HttpEntity<Usuario> requestEntity = new HttpEntity<>(usuario, headers);
+            
+            
+            HttpEntity<Usuario> requestEntityUsuario = new HttpEntity<>(usuario, headers);
             
             
             ResponseEntity<Result<Usuario>> responseEntityUsuario =
                restTemplate.exchange(
                    url + "/usuario/update",
                    HttpMethod.PUT,
-                   requestEntity,
+                   requestEntityUsuario,
                    new ParameterizedTypeReference<Result<Usuario>>() {}
                );
             
