@@ -29,6 +29,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import static org.springframework.http.converter.json.Jackson2ObjectMapperBuilder.json;
@@ -55,6 +56,16 @@ public class UsuarioController {
     
     public String url = "http://localhost:8080";
     
+    @GetMapping("/serviceCount")
+    @ResponseBody
+    public ResponseEntity<Integer> getServiceCount(HttpSession session) {
+        if (session == null || session.getAttribute("token") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Integer serviceCount = (Integer) session.getAttribute("serviceCount");
+        return ResponseEntity.ok(serviceCount != null ? serviceCount : 0);
+    }
+    
     private Usuario getCurrentUser(HttpSession session) {
         Usuario usuario = new Usuario();
         usuario.setIdUsuario((Integer) session.getAttribute("userId"));
@@ -79,6 +90,11 @@ public class UsuarioController {
         
         if (session.getAttribute("token") == null) {
             return "redirect:/auth/login";
+        }
+        
+        String rol = (String) session.getAttribute("rol");
+        if (rol.contains("ROLE_Alumno")) {
+            return "redirect:/usuario/detail/" + session.getAttribute("userId");
         }
         
         HttpHeaders headers = getAuthHeaders(session);

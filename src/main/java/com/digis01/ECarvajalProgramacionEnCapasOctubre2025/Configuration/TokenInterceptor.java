@@ -32,6 +32,20 @@ public class TokenInterceptor implements HandlerInterceptor {
             return false;
         }
         
+         Integer serviceCount = (Integer) session.getAttribute("serviceCount");
+        if (serviceCount == null) {
+            serviceCount = 0;
+        }
+        serviceCount++;
+        
+        if (serviceCount > 5) {
+            session.invalidate();
+            response.sendRedirect("/auth/login?expired=true");
+            return false;
+        } else {
+            session.setAttribute("serviceCount", serviceCount);
+        }
+        
         return true;
     }
 }

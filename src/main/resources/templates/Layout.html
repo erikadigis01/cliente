@@ -15,6 +15,15 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+        <style>
+            .profile-img-detail {
+              width: 150px;
+              height: 150px;
+              object-fit: cover;
+              border-radius: 50%;
+              border: 3px solid #dee2e6;
+            }
+        </style>
     </head>
 
 
@@ -24,6 +33,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                 <div class="container">
                     <a class="navbar-brand fw-bold" href="#">
                     </a>
+                    <div class="alert alert-info my-3">
+                        <span th:text="${serviceCount}" id="serviceCountLabel"></span>
+                    </div>
                     <div class="ms-auto">
                         <form th:action="@{/auth/logout}" method="post">
                             <button  type="submit" class="btn btn-light px-4">
@@ -35,5 +47,20 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
             </nav>
         </header>
         <main layout:fragment="content"></main>
+        <script th:inline="javascript">
+            function actualizarServiceCount() {
+                $.get("/usuario/serviceCount")
+                  .done(function(data) {
+                      $("#serviceCountLabel").text("Has usado " + data + " de 5 servicios disponibles.");
+                  })
+                  .fail(function(xhr) {
+                      if (xhr.status === 401) {
+                          window.location.href = "/auth/login?expired=true";
+                      }
+                  });
+            }
+            setInterval(actualizarServiceCount, 3000);
+
+        </script>
     </body>
 </html>

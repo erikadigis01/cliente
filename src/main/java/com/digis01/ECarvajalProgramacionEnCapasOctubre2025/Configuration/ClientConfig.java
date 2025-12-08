@@ -33,14 +33,9 @@ public class ClientConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
-                        .requestMatchers("/usuario/**").authenticated()
+                        .requestMatchers("/usuario/**").permitAll()
+                        .requestMatchers("/direccion/**").permitAll()
                         .anyRequest().authenticated()
-                )
-                .formLogin(form -> form
-                        .loginPage("/auth/login")  
-                        .loginProcessingUrl("/auth/logout") 
-                        .failureUrl("/auth/login?error=true")
-                        .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
