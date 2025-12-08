@@ -102,6 +102,9 @@ public class Usuario {
     @JsonProperty("status")
     private Integer Status;
     
+    @JsonProperty("isVerified")
+    private Integer IsVerified;
+    
    
     
     public Usuario(){
@@ -109,7 +112,7 @@ public class Usuario {
     }
     
     public Usuario(int IdUsuario, String UserName, String Nombre, String ApellidoPaterno, String ApellidoMaterno, String Email, 
-           String Password, Date FechaNacimiento, char Sexo, String Telefono, String Celular, String Curp, String Imagen, Integer Status){
+           String Password, Date FechaNacimiento, char Sexo, String Telefono, String Celular, String Curp, String Imagen, Integer Status, Integer IsVerified){
         this.IdUsuario = IdUsuario;
         this.UserName = UserName;
         this.Nombre = Nombre;
@@ -124,6 +127,7 @@ public class Usuario {
         this.Curp = Curp;
         this.Imagen = Imagen;
         this.Status = Status;
+        this.IsVerified = IsVerified;
       
     }
     
@@ -233,6 +237,16 @@ public class Usuario {
         
     }
     
+    public void setIsVerified(Integer IsVerified){
+        
+        this.IsVerified = IsVerified;
+    
+    }
+    public Integer getIsVerified(){
+    
+        return IsVerified;
+        
+    }
     
      public Roll getRoll() {
         return Roll;
