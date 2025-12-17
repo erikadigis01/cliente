@@ -2,8 +2,6 @@ package com.digis01.ECarvajalProgramacionEnCapasOctubre2025.Controller;
 
 
 import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.Direccion;
-import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.ErrorCarga;
-import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.Estado;
 import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.Pais;
 import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.Result;
 import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.Roll;
@@ -12,19 +10,12 @@ import com.digis01.ECarvajalProgramacionEnCapasOctubre2025.ML.ValidationGroup;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import java.io.File;
 import java.io.IOException;
-import java.lang.ProcessBuilder.Redirect.Type;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static org.apache.logging.log4j.message.MapMessage.MapFormat.JSON;
-import org.modelmapper.TypeToken;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -32,12 +23,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import static org.springframework.http.converter.json.Jackson2ObjectMapperBuilder.json;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -568,9 +557,13 @@ public class UsuarioController {
 
     }
     
-    @PostMapping("enviar")
+    @PostMapping("/enviar")
     public String CargaMasiva(@RequestParam("archivo") MultipartFile archivo,
             RedirectAttributes redirectAttributes, Model model, HttpSession session) {
+        
+        if (session.getAttribute("token") == null) {
+            return "redirect:/auth/login";
+        }
         
         Result result = new Result();
         RestTemplate restTemplate = new RestTemplate();
@@ -581,7 +574,7 @@ public class UsuarioController {
                 
                 byte[] fileBytes = archivo.getBytes();
                 
-                HttpHeaders headers = new HttpHeaders();
+                HttpHeaders headers = getAuthHeaders(session);
                 headers.setContentType(MediaType.APPLICATION_JSON); 
                 
                 
@@ -595,13 +588,13 @@ public class UsuarioController {
                     new ParameterizedTypeReference<Result>() {}
                 );
                 
-            Result resultCarga = responseEntity.getBody();
-            if (responseEntity.getStatusCode().value() == 200) {
-                
-                resultCarga.correct = true;
-                model.addAttribute("errores", resultCarga.object);
-                
-            }
+                Result resultCarga = responseEntity.getBody();
+                if (responseEntity.getStatusCode().value() == 200) {
+
+                    resultCarga.correct = true;
+                    model.addAttribute("errores", resultCarga.object);
+
+                }
                 
             } catch (IOException ex) {
             
@@ -618,7 +611,10 @@ public class UsuarioController {
             return "redirect:/usuario?error= el archivo esta vacio";
             
         }
-
+        model.addAttribute("session", session);
+        
+        
+        
         return "redirect:/usuario";
 
     }
