@@ -38,7 +38,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         }
         serviceCount++;
         
-        if (serviceCount > 5) {
+        if (serviceCount > 100) {
             session.invalidate();
             response.sendRedirect("/auth/login?expired=true");
             return false;

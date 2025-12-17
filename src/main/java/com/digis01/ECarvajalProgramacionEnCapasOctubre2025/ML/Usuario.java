@@ -50,7 +50,7 @@ public class Usuario {
     
     @NotNull(message = "El campo no puede ser nulo")
     @NotBlank(message = "El campo debe contener datos")
-    @Pattern(regexp = "(^[^\\s]+@+[a-zA-Z0-9_-]+[\\.]+[a-zA-Z0-9_-]+[\\.]+[a-zA-Z0-9_-]+$)", message = "Direccion de correo invalida")
+    //@Pattern(regexp = "(^[^\\s]+@+[a-zA-Z0-9_-]+[\\.]+[a-zA-Z0-9_-]+[\\.]+[a-zA-Z0-9_-]+$)", message = "Direccion de correo invalida")
     @JsonProperty("email")
     private String Email;
     

@@ -17,16 +17,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                         </div>
                         <div class="col-auto d-flex align-items-end">
                             
-<!--                            <div th:if="${errores.size() != 0}">
-                                <span class="text-danger">Existen errores en tu archivo</span>
-                                <ul th:each="error, iterStat: ${errores}">
-                                    <li th:text="${error.descripcion}"></li>
-                                </ul>
-                            </div> -->
-                            <div class="col-auto" th:if="${errores != null}">
-                                <span class="text-success">Hay errores en tu archivo</span>
-                                <span th:text="${errores}"></span>
-                            </div>
                         </div>
                         <div class="col-auto d-flex align-items-end">
                             <button class="btn btn-outline-secondary"
