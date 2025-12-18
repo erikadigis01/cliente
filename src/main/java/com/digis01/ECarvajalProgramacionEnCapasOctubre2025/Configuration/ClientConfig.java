@@ -34,6 +34,7 @@ public class ClientConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/img/**").permitAll()
                         .requestMatchers("/usuario/**").permitAll()
+                        .requestMatchers("/error/**").permitAll()
                         .requestMatchers("/direccion/**").permitAll()
                         .anyRequest().authenticated()
                 )
