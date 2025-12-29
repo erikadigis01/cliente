@@ -16,12 +16,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.core.ParameterizedTypeReference;
 
 @Controller
 @RequestMapping("/auth")
 public class AuthController {
     
     private final String apiUrl = "http://localhost:8080/api/auth";
+    private final String url = "http://localhost:8080/";
     private final RestTemplate restTemplate;
     
     public AuthController(RestTemplate restTemplate) {
@@ -117,5 +119,97 @@ public class AuthController {
         }
         
         return "redirect:/auth/login";
+    }
+    
+    @GetMapping("resetPassword")
+    public String ResetPassword(){
+    
+        return "ResetPassword";
+    }
+    
+    @PostMapping("resetPasswordPost")
+    public String ResetPasswordPost(@RequestParam String campo){
+        
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<?> requestEntity = new HttpEntity<>(campo, headers);
+        
+        RestTemplate restTemplate = new RestTemplate();
+        
+        ResponseEntity<Result> responseEntityUsuario =
+        restTemplate.exchange(
+            url + "/resetPassword",
+            HttpMethod.POST,
+            requestEntity,
+            new ParameterizedTypeReference<Result>() {}
+        );
+        
+        //si si existe el usuario
+        if (responseEntityUsuario.getStatusCode().value() == 200) {
+            //aqui viene el token
+            Result resultUsuario = responseEntityUsuario.getBody();
+            //redireccion a vista para el codigo
+            return "redirect:/auth/resetPasswordConfirmCode/" + resultUsuario.object;
+        
+        } else {
+            //si  no existe otra vez a la redireccion
+            return "ResetPassword";
+        
+        }        
+    }
+    
+    @GetMapping("resetPasswordConfirmCode/{token}") 
+    public String ResetPasswordConfirmCode(@PathVariable ("token") String token){
+        
+        //confirmar que el token es valido mandandolo al servidor
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<?> requestEntity = new HttpEntity<>(token, headers);
+        
+        RestTemplate restTemplate = new RestTemplate();
+        
+        ResponseEntity<Result> responseEntityUsuario =
+        restTemplate.exchange(
+            url + "/resetPassword/verifyToken",
+            HttpMethod.POST,
+            requestEntity,
+            new ParameterizedTypeReference<Result>() {}
+        );
+        
+        //si es valido
+        if (responseEntityUsuario.getStatusCode().value() == 200) {
+        
+            return "ResetConfirmCode";
+        
+        } else {
+        
+            return "ResetPassword";
+        }
+    }
+    
+    @PostMapping("resetPasswordConfirmCode")
+    public String MandarCodigoResetPassword(@RequestParam("codigo")  String codigo) {
+    
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<?> requestEntity = new HttpEntity<>(codigo, headers);
+        
+        RestTemplate restTemplate = new RestTemplate();
+        
+        ResponseEntity<Result> responseEntityUsuario =
+        restTemplate.exchange(
+            url + "/resetPassword/changePassword",
+            HttpMethod.POST,
+            requestEntity,
+            new ParameterizedTypeReference<Result>() {}
+        );
+        
+        //si es valido
+        if (responseEntityUsuario.getStatusCode().value() == 200) {
+            
+            //se agregan atributos de cambiar password
+            return "ChangePassword";
+        
+        } else {
+            //atributos que definan que el code es incorrecto
+            return "ChangePassword";
+        }
     }
 }
